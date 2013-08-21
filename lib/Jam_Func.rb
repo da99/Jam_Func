@@ -149,18 +149,49 @@ class Jam_Func
     end
 
     # === Process final results === --
-    results = Jam_Func::Run.new(self, parent_run, (data || {}), funcs).run()
-    return results.first if results.size < 2
+    jam = Jam_Func::Run.new(self, parent_run, (data || {}), funcs).run()
+
+    return jam unless jam.err
 
     # === Run error if found === --
-    err_name = canon_name(results.first)
-    err      = results[1]
+    err_name = canon_name(jam.err_name)
+    err      = jam.err
     err_func = @on_errs[err_name]
-    return err_func(data || {}, err) if err_func
+    return err_func.call(data || {}, err) if err_func
 
     raise("No error handler found for: #{err_name} : #{err}")
   end # === .run -----------------------
 
+  class Jam # ========================================================
+
+    attr_accessor :last
+    attr_reader   :err_name, :err, :data, :last
+
+    def initialize data
+      self.last = nil
+      @err_name = nil
+      @err      = nil
+      @data     = data
+      @val      = nil
+      @last     = nil
+    end
+
+    def val new_val
+      @val        = new_val
+      @data[:val] = new_val
+    end
+
+    def _last val
+      @last = val
+    end
+
+    def error name, val
+      @err_name = name
+      @err      = val
+      throw :jam_error
+    end
+
+  end # ==============================================================
 
   # # ================================================================
   # # ================== Run (private) ===============================
@@ -170,12 +201,14 @@ class Jam_Func
 
     include Helpers
 
+    attr_reader :err, :err_name
+
     def initialize(jam, parent_run, data, arr)
 
       @jam        = jam
       @parent_run = parent_run
       @data       = data
-      @val        = nil
+      @tasks      = nil
 
       @proc_list = arr.map { |n|
         n.kind_of?(String) ?
@@ -185,12 +218,8 @@ class Jam_Func
 
     end # === initialize
 
-
     def run
-
-      if @tasks
-        raise("Already running.")
-      end
+      raise("Already running.") if @tasks
 
       @tasks = []
 
@@ -204,30 +233,19 @@ class Jam_Func
 
       @tasks = @tasks.flatten
 
-      @tasks.detect { |func|
-        args = func.call(*([@data, @last].slice(0, func.arity)))
-        l    = args.length
+      jam = Jam_Func::Jam.new(@data)
 
-        if l == 0
-          @last = nil
-        elsif l == 1
-          @last       = args[0]
-          @val        = args[0]
-          @data[:val] = @val
-        else
-          @last    = nil
-          @is_stop = true
-          @err     = args[0]
-          @err_msg = args[1]
+      @tasks.detect { |func|
+        is_fine = catch :jam_error do
+          args = [jam.data, jam.last, jam].slice(0, func.arity)
+          jam._last func.call *args
+          true
         end
 
-        @is_stop
+        !is_fine
       }
 
-      @err ?
-        [@err, @err_msg] :
-        [@val]
-
+      jam
     end # === def run
   end # === class Run
 

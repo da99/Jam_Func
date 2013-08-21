@@ -4,7 +4,12 @@
 #
 set -u -e -o pipefail
 
-bundle exec bacon tests/*.rb
+if [[ -z "$@" ]]
+then
+  bundle exec bacon tests/*.rb
+else
+  bundle exec bacon "$@"
+fi
 
 
 
