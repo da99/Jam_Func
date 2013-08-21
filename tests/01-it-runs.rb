@@ -121,19 +121,18 @@ describe ".run(func1, func2, ...)" do
 end # -- describe --
 
 
+lambda { # --- let's ignore these for now.
 describe '.run .includes' do
 
   it 'prepends arguments in specified order to .includes' do
     t1 = Jam_Func.new
-    t1._val = 1
 
     t2 = Jam_Func.new
-    t2._val = 2
 
     t3 = Jam_Func.new(t1, t2)
 
-    t3.includes[0]._val.should.same_as t1._val
-    t3.includes[1]._val.should.same_as t2._val
+    t3.includes[0].should.same_as t1
+    t3.includes[1].should.same_as t2
   end
 
   it 'filters out duplicates among arguments in .includes' do
@@ -176,7 +175,7 @@ describe '.run .includes' do
     o.should.equal({:vals=>[1,2,3,4]})
   end
 end #--  === end desc
-
+}
 
 
 
