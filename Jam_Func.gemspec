@@ -16,5 +16,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   #s.add_runtime_dependency 'erector'
   s.add_development_dependency('bacon')
+  s.add_development_dependency('minitest')
+  s.add_development_dependency('minitest-bacon')
 end
 

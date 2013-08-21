@@ -4,10 +4,10 @@ class Jam_Func
 
   module Helpers # ============================
 
-    WHITE = /\s+/g
+    WHITE = /\s+/
 
     def canon_name(str)
-      return str.strip.sub(WHITE, " ").upcase
+      return str.strip.gsub(WHITE, " ").upcase
     end
 
   end # === module ============================
@@ -62,7 +62,7 @@ class Jam_Func
     self
   end
 
-  def list(raw_name, create_if_needed)
+  def list(raw_name, create_if_needed = false)
     name = canon_name(raw_name);
     if !@ons[name] && create_if_needed
       @ons[name] = []
@@ -138,7 +138,7 @@ class Jam_Func
     #    .run(parent_run, {}, func1, func2);
     #    .run(parent_run,     func1, func2);
     # ----------------------------------------------
-    if !str_funcs || str_funcs.length.empty?
+    if !str_funcs || str_funcs.empty?
       t    = Jam_Func.new
       name = 'one-off'
       funcs.each { |f|
@@ -149,7 +149,7 @@ class Jam_Func
     end
 
     # === Process final results === --
-    results = Jam_Func::Run.new( parent_run, (data || {}), funcs).run()
+    results = Jam_Func::Run.new(self, parent_run, (data || {}), funcs).run()
     return results.first if results.size < 2
 
     # === Run error if found === --
@@ -159,12 +159,12 @@ class Jam_Func
     return err_func(data || {}, err) if err_func
 
     raise("No error handler found for: #{err_name} : #{err}")
-  end # .run -----------------------
+  end # === .run -----------------------
 
 
-  # ================================================================
-  # ================== Run (private) ===============================
-  # ================================================================
+  # # ================================================================
+  # # ================== Run (private) ===============================
+  # # ================================================================
 
   class Run
 
@@ -178,7 +178,7 @@ class Jam_Func
       @val        = nil
 
       @proc_list = arr.map { |n|
-        n.kind_of? String ?
+        n.kind_of?(String) ?
           canon_name(n) :
           n
       }
@@ -192,7 +192,7 @@ class Jam_Func
         raise("Already running.")
       end
 
-      @tasks = {}
+      @tasks = []
 
       @proc_list.each { |name|
         if  name.kind_of? Proc
@@ -205,15 +205,15 @@ class Jam_Func
       @tasks = @tasks.flatten
 
       @tasks.detect { |func|
-        args = func(@data, @last)
+        args = func.call(*([@data, @last].slice(0, func.arity)))
         l    = args.length
 
         if l == 0
           @last = nil
         elsif l == 1
-          @last     = args[0]
-          @val      = args[0]
-          @data.val = @val
+          @last       = args[0]
+          @val        = args[0]
+          @data[:val] = @val
         else
           @last    = nil
           @is_stop = true
@@ -229,6 +229,7 @@ class Jam_Func
         [@val]
 
     end # === def run
+  end # === class Run
 
 end # === Jam_Func
 
