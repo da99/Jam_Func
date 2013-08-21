@@ -24,12 +24,12 @@ describe '.run' do
     o.should.be.equal [1,2,3]
   end
 
-  it "returns value of last function run" do
+  it "returns value of data.val" do
     j = Jam_Func.new
     o = []
-    j.on 'add', lambda { 1 }
-    j.on 'add', lambda { 2 }
-    j.on 'add', lambda { 3 }
+    j.on 'add', lambda { |d,last,j| j.val(1) }
+    j.on 'add', lambda { |d,last,j| j.val(2) }
+    j.on 'add', lambda { |d,last,j| j.val(3) }
 
     j.run('add').should.be.same_as 3
   end

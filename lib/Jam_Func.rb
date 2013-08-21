@@ -151,7 +151,7 @@ class Jam_Func
     # === Process final results === --
     jam = Jam_Func::Run.new(self, parent_run, (data || {}), funcs).run()
 
-    return jam unless jam.err
+    return jam.data[:val] unless jam.err
 
     # === Run error if found === --
     err_name = canon_name(jam.err_name)
@@ -171,7 +171,7 @@ class Jam_Func
       self.last = nil
       @err_name = nil
       @err      = nil
-      @data     = data
+      @data     = data || {}
       @val      = nil
       @last     = nil
     end
