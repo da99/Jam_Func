@@ -12,6 +12,26 @@ class Jam_Func
 
   end # === module ============================
 
+  module DSL # ================================
+
+    def jam
+      @the_jam ||= Jam_Func.new
+    end
+
+    def on *args
+      jam.on(*args)
+    end
+
+    def on_error *args
+      jam.on_error(*args)
+    end
+
+    def run *args
+      jam.run(*args)
+    end
+
+  end # =======================================
+
   include Helpers
 
   def initialize *args
