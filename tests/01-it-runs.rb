@@ -45,7 +45,7 @@ describe '.run' do
   end
 
   it 'combines data objects into one object' do
-    o = [];
+    o = {};
     a = Jam_Func.new
     a.on 'one', lambda { |d|
       o.merge!(d).merge!({:two=>'b'})
@@ -62,7 +62,7 @@ describe '.run' do
 
   it 'squeezes spaces in event names upon .on and .run' do
     T.on 'spaced    NAME', lambda { |f|
-      f.vals = 1
+      f[:vals] = 1
     }
 
     o = {:vals=>nil}
