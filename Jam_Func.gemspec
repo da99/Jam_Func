@@ -1,7 +1,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'Jam_Func'
-  s.version     = '0.0.0'
+  s.version     = %x(cat VERSION)
   s.date        = '2013-08-21'
   s.summary     = "Not ready."
   s.description = "Run a group of functions with flow control."
