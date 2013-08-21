@@ -8,7 +8,7 @@ Third = Jam_Func.new
 
 T.on('add', lambda { |o| o.result.push 1})
 T.on('add', lambda { |o| o.result.push 2})
-T.on('mult', 'div', lambda { |o| o.result.push "mult or div" })
+T.on('mult', 'div', lambda { |o| o[:result].push "mult or div" })
 
 
 # -- .RUN ------------------------------------------------
@@ -36,11 +36,11 @@ describe '.run' do
 
   it 'runs on multi-defined events' do
     T.run 'mult', {:result=>[]}, lambda { |o|
-      o.result.should.be.equal ["mult or div"]
+      o[:result].should.be.equal ["mult or div"]
     }
 
     T.run 'div', {:result=>[]}, lambda { |o|
-      o.result.should.be.equal ["mult or div"]
+      o[:result].should.be.equal ["mult or div"]
     }
   end
 
