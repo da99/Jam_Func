@@ -1,6 +1,6 @@
 require 'Bacon_Colored'
-
 require("Jam_Func")
+
 T     = Jam_Func.new
 One   = Jam_Func.new
 Two   = Jam_Func.new
@@ -120,62 +120,6 @@ describe ".run(func1, func2, ...)" do
 
 end # -- describe --
 
-
-lambda { # --- let's ignore these for now.
-describe '.run .includes' do
-
-  it 'prepends arguments in specified order to .includes' do
-    t1 = Jam_Func.new
-
-    t2 = Jam_Func.new
-
-    t3 = Jam_Func.new(t1, t2)
-
-    t3.includes[0].should.same_as t1
-    t3.includes[1].should.same_as t2
-  end
-
-  it 'filters out duplicates among arguments in .includes' do
-    t1 = Jam_Func.new
-    t2 = Jam_Func.new(t1, t1, t1)
-
-    t2.includes.size.should.same_as 2
-  end
-
-  it 'runs events in .includes' do
-    t1 = Jam_Func.new
-    t1.on 'one', lambda { |f| f[:vals].push 1 }
-    t1.on 'two', lambda { |f| f[:vals].push 2 }
-
-    t2 = Jam_Func.new(t1, t1, t1)
-    t2.on 'one', lambda { |f| f[:vals].push 3 }
-    t2.on 'two', lambda { |f| f[:vals].push 4 }
-
-    o = {:vals=>[]}
-    t2.run('one', 'two', o)
-    o.should.equal({:vals=>[1,3,2,4]})
-  end
-
-  it 'runs events in .includes of the .includes' do
-    t1 = Jam_Func.new
-    t1.on 'add', lambda { |f| f[:vals].push 1 }
-
-    t2 = Jam_Func.new(t1)
-    t2.on 'add', lambda { |f| f[:vals].push 2 }
-
-    t3 = Jam_Func.new(t2)
-    t3.on 'add', lambda { |f| f[:vals].push 3 }
-
-    t4 = Jam_Func.new(t3)
-    t4.on 'add', lambda { |f| f[:vals].push 4 }
-
-    o = {:vals=>[]}
-    t4.run('add', o)
-
-    o.should.equal({:vals=>[1,2,3,4]})
-  end
-end #--  === end desc
-}
 
 
 
