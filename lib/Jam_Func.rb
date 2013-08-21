@@ -223,12 +223,12 @@ class Jam_Func
 
       @tasks = []
 
-      @proc_list.each { |name|
-        if  name.kind_of? Proc
-          return @tasks.push name
+      @proc_list.each { |var|
+        if var.kind_of? String
+          @tasks.push(@jam.entire_list_for(var));
+        else
+          @tasks.push var
         end
-
-        @tasks.push(@jam.entire_list_for(name));
       }
 
       @tasks = @tasks.flatten
