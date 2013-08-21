@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.description = "Run a group of functions with flow control."
   s.authors     = ["da99"]
   s.email       = 'da99@da99'
-  s.executables = ["Jam_Func"]
+  #s.executables = ["Jam_Func"]
   s.files       = `ls lib/`.split("
 ").map { |f| "lib/#{f}" }
   s.homepage    = 'http://www.github.com/da99/Jam_Func'
